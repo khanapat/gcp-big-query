@@ -1,0 +1,16 @@
+app:
+  name: "practice"
+  ip: "localhost"
+  port: "9090"
+  waitTimeout: "10"
+
+log:
+  env: "dev"
+  level: "debug"
+
+mssql:
+  type: "mssql"
+  host: "34.87.185.208:1433"
+  username: "mssql-admin"
+  password: "P@ssw0rd"
+  schema: "to_be_number_one"

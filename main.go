@@ -1,15 +1,27 @@
 package main
 
 import (
+	"context"
+	"fmt"
 	"log"
+	"net/http"
+	"os"
+	"os/signal"
+	"runtime"
 	"strings"
+	"syscall"
+	"time"
 
+	"github.com/gorilla/mux"
 	"github.com/spf13/viper"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
+	"krungthai.com/khanapat/backend-web-big-query/analyze"
+	"krungthai.com/khanapat/backend-web-big-query/database"
 )
 
 func init() {
+	runtime.GOMAXPROCS(1)
 	initViper()
 	initLogConfig()
 }
@@ -62,5 +74,47 @@ func initLogConfig() {
 }
 
 func main() {
+	r := mux.NewRouter()
+	rWithPrefix := r.PathPrefix("/bootcamp/data").Subrouter()
 
+	db := database.MssqlConn()
+	defer db.Close()
+
+	dbInquiryMerchantByLatLong := analyze.NewInquiryMerchantByLatLongFn(db)
+
+	analyzeHanlder := analyze.NewHandler(
+		analyze.NewGetMerchantFn(dbInquiryMerchantByLatLong),
+	)
+
+	rWithPrefix.HandleFunc("/inquiry", analyzeHanlder.Inquiry).Methods("POST")
+
+	srv := &http.Server{
+		Addr:         fmt.Sprintf("0.0.0.0:%s", viper.GetString("app.port")),
+		Handler:      r,
+		ReadTimeout:  15 * time.Second,
+		WriteTimeout: 15 * time.Second,
+		IdleTimeout:  60 * time.Second,
+	}
+
+	zap.L().Info(fmt.Sprintf("⇨ http server started on [::]:%s", viper.GetString("app.port")))
+
+	go func() {
+		if err := srv.ListenAndServe(); err != nil {
+			zap.L().Fatal("cannot start server",
+				zap.Error(err))
+		}
+	}()
+
+	c := make(chan os.Signal, 1)
+	signal.Notify(c, os.Interrupt, syscall.SIGTERM)
+
+	<-c
+
+	ctx, cancel := context.WithTimeout(context.Background(), viper.GetDuration("app.waitTimeout"))
+	defer cancel()
+
+	srv.Shutdown(ctx)
+
+	zap.L().Info("shutting down")
+	os.Exit(0)
 }
