@@ -14,3 +14,19 @@ mssql:
   username: "mssql-admin"
   password: "P@ssw0rd"
   schema: "to_be_number_one"
+
+bigquery:
+  projectID: "bigquery-admin@bootcamp-1-team1.iam.gserviceaccount.com"
+  credentials: '{
+  "type": "service_account",
+  "project_id": "bootcamp-1-team1",
+  "private_key_id": "0d1fe0c323b9e44d6db3c7e7a0c9c3edbac44b9b",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQDZT+Vbb4BmaKQV\nDoB98UrH811vLIQDxGQOfZztJPxgrIyQqGoEbX9M5Yjv4ekvdfYE83LT73O7sOEz\noOxEozX/csgb4Ltf3nDcekno0gjvdcufnfAqNsvK2Ky+ry+LGQiIkQuUXbvE6fDc\nsDWZA3/s1kqG87iX4MBnd0nprOg2yRAeuHNkRMKG+GTHq0dIkLQwhqyV+N0prR2w\ns5uwf5UqWJPqR1Iqf4wiZxNezQ998nL9WA5MeaXukA4o6iehK1sGXTUJ2W0H5Uyu\nno4zynCOlOq0B8cHXOa7hb0Fdnw4avOFPKI1+srmx4fdwVDjcwbYSTJd1Jr5kPDK\nBQ01pCu9AgMBAAECggEAAUfNaAIFWtUgA7hqUmj9vKWMSzo9wZCX2awCJOA/FR9p\n0/UMwYpBofAyTojhaQmuvEMQ+KW5uVqRS87AGvwZNoWfHzxDmQzZqRBBZ5FL7dlJ\nrLREtNhOJXEBvOfnBaX38mdkZD3p0X8NZRzWsVhKGdj+EcMq4cjjFAOpwv+P/g6j\nc+tCAiCjqM+rNgXRiZncI0CT0z8OHqRrqv5pYphrmP+JXqCJODKiQeAp3JKTK5iK\nsHZnN3g30baudJJ9VTFYH2VzcNCZ8cT9OjVdxkdMBNxQUYXAzwKmtktjABGSywaK\n/uqJfQFpxELlrSnkxHNGb+QcqRyQHGpaKP7yUeZF4QKBgQD8m3qR6iMt+LuGDLSV\nK9kUUxx5HC+uybpbkxX2hG+S+7n0jADaanX08keqs06LH8hhMnOyZpf++jyIhKTg\niqlxGAOkYyghxixFs7N7LCXnKvwYa71gRY0OKxfN1FoQp5pdqDkx6TliI36U13OD\n4sLoBHrfCbLKJT2LJu4ppSo7sQKBgQDcOxBodWSRDYXjPmyoHHQt4LKE6Vjna9qv\n8SWgFcMzvBC7w/yK7jVDUlDcTfQGhQaih1KeDc+PzBu5ZxjQaes4cFhY5k48UOdS\n3VsewYvPqk86eGpxvdxnkj4CHWU2d0pUJndLCYiouuPIquJXjBhijn9nLcFSqrJB\nf3EO+kMPzQKBgFXxK+Vi7G8ileJIhlPOJD/2+tP1k/96oI2xYCKL8k3mmOCrlUq6\nN8GLgHiCIrHQsWLoQFas8v+L8XZc8p92bamNiwetuKStALkCJ4k7fvXEORqx5S9Q\n2mm8nY+otK+/5hQBPNxPRfeurc1D9Agl6Tv48jjZ2ttNij/CkfrXN6QxAoGBANLg\nF3D+X2JpQXd7kY1TWYeIbUfJLGDDrG3mCTIFRJloDdnM6yeYuhWRX23jkrMfc1/z\nFY/UB5hYR3+7EU6W7S1onZ/aPrWQfj+hRxvnFdmt6RlCriHlO4NMy+U4gm6pwNlc\nz8NhCKMP+QZvYjWUJtFQQvvoGwHuAqumvPordkVNAoGBAI5AAvTzCPIoDuPxCPCS\n2xA0vuwhklhwOekfdC0NVEHywQjFexz0ygc/yX/E2MeFUiGVqt+Yw3atlJxx9nT0\nI/ciNDNaGoUIM+HW5/Cl75jZPanTRonAhNxsESyce7zrYcMMg8hPGY3tlLaB5hVa\nWL2b4j2GM74/cmPIx1QIcbOX\n-----END PRIVATE KEY-----\n",
+  "client_email": "bigquery-admin@bootcamp-1-team1.iam.gserviceaccount.com",
+  "client_id": "101119515257543551025",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/bigquery-admin%40bootcamp-1-team1.iam.gserviceaccount.com"
+}'
+

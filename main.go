@@ -77,16 +77,21 @@ func main() {
 	r := mux.NewRouter()
 	rWithPrefix := r.PathPrefix("/bootcamp/data").Subrouter()
 
-	db := database.MssqlConn()
-	defer db.Close()
+	dbMsSQL := database.MssqlConn()
+	defer dbMsSQL.Close()
 
-	dbInquiryMerchantByLatLong := analyze.NewInquiryMerchantByLatLongFn(db)
+	dbBigQuery := database.BigQueryConn()
+	defer dbBigQuery.Close()
+
+	dbInquiryMerchantByLatLong := analyze.NewInquiryMerchantByLatLongFn(dbMsSQL)
+	dbInquiryMerchantRawData := analyze.NewInquiryMerchantRawDataFn(dbBigQuery)
 
 	analyzeHanlder := analyze.NewHandler(
 		analyze.NewGetMerchantFn(dbInquiryMerchantByLatLong),
+		analyze.NewGetMerchantRawDataFn(dbInquiryMerchantRawData),
 	)
 
-	rWithPrefix.HandleFunc("/inquiry", analyzeHanlder.Inquiry).Methods("POST")
+	rWithPrefix.HandleFunc("/inquiry/raw", analyzeHanlder.InquiryRaw).Methods("POST")
 
 	srv := &http.Server{
 		Addr:         fmt.Sprintf("0.0.0.0:%s", viper.GetString("app.port")),

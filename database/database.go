@@ -1,12 +1,14 @@
 package database
 
 import (
+	"context"
 	"database/sql"
 	"fmt"
 
-	_ "github.com/denisenkom/go-mssqldb"
+	"cloud.google.com/go/bigquery"
 	"github.com/spf13/viper"
 	"go.uber.org/zap"
+	"google.golang.org/api/option"
 )
 
 func MssqlConn() *sql.DB {
@@ -20,4 +22,13 @@ func MssqlConn() *sql.DB {
 	zap.L().Debug("mssql OK!")
 
 	return conn
+}
+
+func BigQueryConn() *bigquery.Client {
+	ctx := context.Background()
+	client, err := bigquery.NewClient(ctx, viper.GetString("bigquery.projectID"), option.WithCredentialsJSON([]byte(viper.GetString("bigquery.credentials"))))
+	if err != nil {
+		zap.L().Fatal(fmt.Sprintf("Cannot connect to BigQuery - %s", err))
+	}
+	return client
 }

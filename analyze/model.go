@@ -6,7 +6,7 @@ type InquiryAnalyzedDataRequest struct {
 	Distance            float64 `json:"distance"`
 	MerchantCategory    string  `json:"merchantCategory"`
 	MerchantSubCategory string  `json:"merchantSubCategory"`
-	PaymentDateTime     string  `json:"paymentDatetime"`
+	MerchantDateTime    string  `json:"merchantDatetime"`
 }
 
 type InquiryAnalyzedDataResponse struct {
