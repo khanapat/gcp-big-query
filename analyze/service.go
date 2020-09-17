@@ -43,8 +43,7 @@ func NewGetMerchantSummaryFn(inquiryMerchantSummaryFn InquiryMerchantSummaryFn, 
 		if err != nil {
 			return response.NewResponseError(http.StatusInternalServerError, "501", "Merchant not found."), err
 		}
-		// var sumAge []string
-		// for i := 0; i <= len(*countAge); i++ {
+		// for _, data range &countAge {
 
 		// }
 
