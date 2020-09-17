@@ -16,7 +16,7 @@ mssql:
   schema: "to_be_number_one"
 
 bigquery:
-  projectID: "bigquery-admin@bootcamp-1-team1.iam.gserviceaccount.com"
+  projectID: "bootcamp-1-team1"
   credentials: '{
   "type": "service_account",
   "project_id": "bootcamp-1-team1",

@@ -3,30 +3,30 @@ package analyze
 import "time"
 
 type AnalyzedData struct {
-	MerchantID           string    `json:"merchantId"`
-	MerchantName         string    `json:"merchantName"`
-	MerchantCategory     string    `json:"merchantCategory"`
-	MerchantSubCategory  string    `json:"merchantSubCategory"`
-	MerchantLatitude     string    `json:"merchantLatitude"`
-	MerchantLongitude    string    `json:"merchantLongitude"`
-	MerchantType         string    `json:"merchantType"`
-	MerchantBranch       string    `json:"merchantBranch"`
-	IsCreditCardAccepted bool      `json:"isCreditCardAccepted"`
-	Amount               float64   `json:"amount"`
-	Province             string    `json:"province"`
-	TimeStamp            time.Time `json:"timeStamp"`
-	PaymentType          string    `json:"paymentType"`
-	Gender               string    `json:"gender"`
-	Fee                  float64   `json:"fee"`
-	InstallmentPlan      string    `json:"installmentPlan"`
-	Salary               float64   `json:"salary"`
-	Age                  int       `json:"age"`
+	MerchantID           string    `bigquery:"merchant_id"`
+	MerchantName         string    `bigquery:"merchant_name"`
+	MerchantCategory     string    `bigquery:"merchant_category"`
+	MerchantSubCategory  string    `bigquery:"merchant_sub_category"`
+	MerchantLatLog       string    `bigquery:"merchant_latlog"`
+	MerchantType         string    `bigquery:"merchant_type"`
+	MerchantBranch       string    `bigquery:"merchant_branch"`
+	IsCreditCardAccepted bool      `bigquery:"is_credit_card_accepted"`
+	Amount               float64   `bigquery:"amount"`
+	Province             string    `bigquery:"province"`
+	TimeStamp            time.Time `bigquery:"time_stamp"`
+	PaymentType          string    `bigquery:"payment_type"`
+	Gender               string    `bigquery:"gender"`
+	Fee                  float64   `bigquery:"fee"`
+	InstallmentPlan      string    `bigquery:"installment_plan"`
+	Salary               float64   `bigquery:"salary"`
+	Age                  int       `bigquery:"age"`
 }
 
 type SummaryData struct {
-	MerchantSubCategoryNumber int     `json:"merchantSubCategoryNumber"`
-	AverageAmount             float64 `json:"averageAmount"`
-	MinimumAmount             float64 `json:"minimumAmount"`
-	MaximumAmount             float64 `json:"maximumAmount"`
-	AverageSalary             float64 `json:"averageSalary"`
+	MerchantSubCategoryNumber int     `bigquery:"merchant_sub_category_number"`
+	AverageAmount             float64 `bigquery:"average_amount"`
+	MinimumAmount             float64 `bigquery:"minimum_amount"`
+	MaximumAmount             float64 `bigquery:"maximum_amount"`
+	AverageSalary             float64 `bigquery:"average_salary"`
+	TotalTransaction          int     `bigquery:"total_transaction"`
 }
