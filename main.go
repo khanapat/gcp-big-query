@@ -68,6 +68,7 @@ func initLogConfig() {
 		config.Encoding = "json"
 	}
 	config.EncoderConfig = encoderConfig
+	config.OutputPaths = []string{"stdout"}
 
 	logger, _ := config.Build()
 	zap.ReplaceGlobals(logger)
@@ -84,11 +85,12 @@ func main() {
 	dbInquiryMerchantSummary := analyze.NewInquiryMerchantSummaryFn(dbBigQuery)
 	dbInquiryMaleMerchant := analyze.NewInquiryMaleMerchantFn(dbBigQuery)
 	dbInquiryFemaleMerchant := analyze.NewInquiryFemaleMerchantFn(dbBigQuery)
+	dbInquiryCountAge := analyze.NewInquiryCountAgeFn(dbBigQuery)
 	dbInquiryTopSubMerchant := analyze.NewInquiryTopSubMerchantFn(dbBigQuery)
 
 	analyzeHandler := analyze.NewHandler(
 		analyze.NewGetMerchantRawDataFn(dbInquiryMerchantRawData),
-		analyze.NewGetMerchantSummaryFn(dbInquiryMerchantSummary, dbInquiryMaleMerchant, dbInquiryFemaleMerchant, dbInquiryTopSubMerchant),
+		analyze.NewGetMerchantSummaryFn(dbInquiryMerchantSummary, dbInquiryMaleMerchant, dbInquiryFemaleMerchant, dbInquiryCountAge, dbInquiryTopSubMerchant),
 	)
 
 	rWithPrefix.HandleFunc("/inquiry/raw", analyzeHandler.InquiryBigQueryRaw).Methods("POST")

@@ -21,7 +21,7 @@ func NewGetMerchantRawDataFn(inquiryMerchantRawDataFn InquiryMerchantRawDataFn) 
 	}
 }
 
-func NewGetMerchantSummaryFn(inquiryMerchantSummaryFn InquiryMerchantSummaryFn, inquiryMaleMerchantFn InquiryMaleMerchantFn, inquiryFemaleMerchantFn InquiryFemaleMerchantFn, inquiryTopSubMerchantFn InquiryTopSubMerchantFn) GetMerchantSummaryFn {
+func NewGetMerchantSummaryFn(inquiryMerchantSummaryFn InquiryMerchantSummaryFn, inquiryMaleMerchantFn InquiryMaleMerchantFn, inquiryFemaleMerchantFn InquiryFemaleMerchantFn, inquiryCountAgeFn InquiryCountAgeFn, inquiryTopSubMerchantFn InquiryTopSubMerchantFn) GetMerchantSummaryFn {
 	return func(req InquiryAnalyzedDataRequest, ctx context.Context) (response.Responser, error) {
 		summary, err := inquiryMerchantSummaryFn(req.Latitude, req.Longitude, req.Distance, req.MerchantCategory, req.MerchantSubCategory, req.MerchantDateTime, ctx)
 		if err != nil {
@@ -35,17 +35,26 @@ func NewGetMerchantSummaryFn(inquiryMerchantSummaryFn InquiryMerchantSummaryFn, 
 		if err != nil {
 			return response.NewResponseError(http.StatusInternalServerError, "501", "Merchant not found."), err
 		}
+		// countAge, err := inquiryCountAgeFn(req.Latitude, req.Longitude, req.Distance, req.MerchantCategory, req.MerchantSubCategory, req.MerchantDateTime, ctx)
+		// if err != nil {
+		// 	return response.NewResponseError(http.StatusInternalServerError, "501", "Merchant not found."), err
+		// }
 		topSubMerchant, err := inquiryTopSubMerchantFn(req.Latitude, req.Longitude, req.Distance, req.MerchantCategory, req.MerchantDateTime, ctx)
 		if err != nil {
 			return response.NewResponseError(http.StatusInternalServerError, "501", "Merchant not found."), err
 		}
+		// var sumAge []string
+		// for i := 0; i <= len(*countAge); i++ {
+
+		// }
+
 		resp := InquiryAnalyzedDataResponse{
 			MerchantSubCategoryNumber: summary.MerchantSubCategoryNumber,
 			AverageAmount:             summary.AverageAmount,
 			PurchasingPower:           fmt.Sprintf("%f-%f", summary.MinimumAmount, summary.MaximumAmount),
 			Age:                       "20",
-			Male:                      float64(maleNo / summary.TotalTransaction),
-			Female:                    float64(femaleNo / summary.TotalTransaction),
+			Male:                      (float64(maleNo) / float64(summary.TotalTransaction)) * 100,
+			Female:                    (float64(femaleNo) / float64(summary.TotalTransaction)) * 100,
 			Salary:                    summary.AverageSalary,
 			TopSubCategory:            *topSubMerchant,
 		}

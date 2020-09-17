@@ -31,6 +31,11 @@ type SummaryData struct {
 	TotalTransaction          int     `bigquery:"total_transaction"`
 }
 
+type CountAge struct {
+	Age      int `bigquery:"age"`
+	CountAge int `bigquery:"count_age"`
+}
+
 type TopSubMerchant struct {
 	MerchantSubCategory       string `bigquery:"merchant_sub_category"`
 	MerchantSubCategoryNumber int    `bigquery:"merchant_sub_category_number"`

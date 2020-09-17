@@ -13,6 +13,7 @@ type InquiryMerchantRawDataFn func(latitude float64, longitude float64, distance
 type InquiryMerchantSummaryFn func(latitude float64, longitude float64, distance float64, merchantCategory string, merchantSubCategory string, merchantDatetime string, ctx context.Context) (*SummaryData, error)
 type InquiryMaleMerchantFn func(latitude float64, longitude float64, distance float64, merchantCategory string, merchantSubCategory string, merchantDatetime string, ctx context.Context) (int, error)
 type InquiryFemaleMerchantFn func(latitude float64, longitude float64, distance float64, merchantCategory string, merchantSubCategory string, merchantDatetime string, ctx context.Context) (int, error)
+type InquiryCountAgeFn func(latitude float64, longitude float64, distance float64, merchantCategory string, merchantSubCategory string, merchantDatetime string, ctx context.Context) (*[]CountAge, error)
 type InquiryTopSubMerchantFn func(latitude float64, longitude float64, distance float64, merchantCategory string, merchantDatetime string, ctx context.Context) (*[]TopSubMerchant, error)
 
 func NewInquiryMerchantRawDataFn(db *bigquery.Client) InquiryMerchantRawDataFn {
@@ -106,6 +107,35 @@ func NewInquiryFemaleMerchantFn(db *bigquery.Client) InquiryFemaleMerchantFn {
 		female := values["female"].(int64)
 		zap.L().Info(fmt.Sprintf("Inquiry male - Success"))
 		return int(female), nil
+	}
+}
+
+func NewInquiryCountAgeFn(db *bigquery.Client) InquiryCountAgeFn {
+	return func(latitude float64, longitude float64, distance float64, merchantCategory string, merchantSubCategory string, merchantDatetime string, ctx context.Context) (*[]CountAge, error) {
+		var values []CountAge
+		query := fmt.Sprintf("SELECT age, COUNT(age) AS count_age FROM bootcamp1_dataviz.masterData\n"+
+			"WHERE ST_MAXDISTANCE(merchant_latlog, ST_GEOGPOINT(%f, %f)) <= %f AND merchant_category='%s' AND merchant_sub_category='%s' AND time_stamp>='%s'\n"+
+			"GROUP BY age;\n",
+			longitude, latitude, distance, merchantCategory, merchantSubCategory, merchantDatetime)
+		zap.L().Debug(query)
+		q := db.Query(query)
+		it, err := q.Read(ctx)
+		if err != nil {
+			return nil, err
+		}
+		for {
+			var value CountAge
+			err := it.Next(&values)
+			if err == iterator.Done {
+				break
+			}
+			if err != nil {
+				return nil, err
+			}
+			values = append(values, value)
+		}
+		zap.L().Info(fmt.Sprintf("Inquiry Age - Success"))
+		return &values, nil
 	}
 }
 
