@@ -2,7 +2,6 @@ package analyze
 
 import (
 	"context"
-	"fmt"
 	"net/http"
 
 	"krungthai.com/khanapat/backend-web-big-query/response"
@@ -35,23 +34,43 @@ func NewGetMerchantSummaryFn(inquiryMerchantSummaryFn InquiryMerchantSummaryFn, 
 		if err != nil {
 			return response.NewResponseError(http.StatusInternalServerError, "501", "Merchant not found."), err
 		}
-		// countAge, err := inquiryCountAgeFn(req.Latitude, req.Longitude, req.Distance, req.MerchantCategory, req.MerchantSubCategory, req.MerchantDateTime, ctx)
-		// if err != nil {
-		// 	return response.NewResponseError(http.StatusInternalServerError, "501", "Merchant not found."), err
-		// }
+		countAge, err := inquiryCountAgeFn(req.Latitude, req.Longitude, req.Distance, req.MerchantCategory, req.MerchantSubCategory, req.MerchantDateTime, ctx)
+		if err != nil {
+			return response.NewResponseError(http.StatusInternalServerError, "501", "Merchant not found."), err
+		}
 		topSubMerchant, err := inquiryTopSubMerchantFn(req.Latitude, req.Longitude, req.Distance, req.MerchantCategory, req.MerchantDateTime, ctx)
 		if err != nil {
 			return response.NewResponseError(http.StatusInternalServerError, "501", "Merchant not found."), err
 		}
-		// for _, data range &countAge {
-
-		// }
-
+		var oneFive int
+		var twoEight int
+		var fourOne int
+		var fiveFour int
+		var sixSeven int
+		for _, data := range countAge {
+			age := data.Age
+			switch {
+			case age >= 67 && age <= 80:
+				sixSeven += data.CountAge
+			case age >= 54:
+				fiveFour += data.CountAge
+			case age >= 41:
+				fourOne += data.CountAge
+			case age >= 28:
+				twoEight += data.CountAge
+			case age >= 15:
+				oneFive += data.CountAge
+			}
+		}
+		var agingRange []int
+		agingRange = append(agingRange, oneFive, twoEight, fourOne, fiveFour, sixSeven)
 		resp := InquiryAnalyzedDataResponse{
 			MerchantSubCategoryNumber: summary.MerchantSubCategoryNumber,
 			AverageAmount:             summary.AverageAmount,
-			PurchasingPower:           fmt.Sprintf("%f-%f", summary.MinimumAmount, summary.MaximumAmount),
-			Age:                       "20",
+			PurchasingPowerMax:        summary.MaximumAmount,
+			PurchasingPowerMin:        summary.MinimumAmount,
+			Age:                       20,
+			AgeRange:                  agingRange,
 			Male:                      (float64(maleNo) / float64(summary.TotalTransaction)) * 100,
 			Female:                    (float64(femaleNo) / float64(summary.TotalTransaction)) * 100,
 			Salary:                    summary.AverageSalary,

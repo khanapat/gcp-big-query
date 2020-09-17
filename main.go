@@ -95,6 +95,7 @@ func main() {
 
 	rWithPrefix.HandleFunc("/inquiry/raw", analyzeHandler.InquiryBigQueryRaw).Methods("POST")
 	rWithPrefix.HandleFunc("/inquiry/summary", analyzeHandler.InquiryBigQuerySummary).Methods("POST")
+	r.HandleFunc("/healthcheck", analyzeHandler.HealthCheck).Methods("GET")
 
 	srv := &http.Server{
 		Addr:         fmt.Sprintf("0.0.0.0:%s", viper.GetString("app.port")),

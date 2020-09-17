@@ -13,7 +13,7 @@ type InquiryMerchantRawDataFn func(latitude float64, longitude float64, distance
 type InquiryMerchantSummaryFn func(latitude float64, longitude float64, distance float64, merchantCategory string, merchantSubCategory string, merchantDatetime string, ctx context.Context) (*SummaryData, error)
 type InquiryMaleMerchantFn func(latitude float64, longitude float64, distance float64, merchantCategory string, merchantSubCategory string, merchantDatetime string, ctx context.Context) (int, error)
 type InquiryFemaleMerchantFn func(latitude float64, longitude float64, distance float64, merchantCategory string, merchantSubCategory string, merchantDatetime string, ctx context.Context) (int, error)
-type InquiryCountAgeFn func(latitude float64, longitude float64, distance float64, merchantCategory string, merchantSubCategory string, merchantDatetime string, ctx context.Context) (*[]CountAge, error)
+type InquiryCountAgeFn func(latitude float64, longitude float64, distance float64, merchantCategory string, merchantSubCategory string, merchantDatetime string, ctx context.Context) ([]CountAge, error)
 type InquiryTopSubMerchantFn func(latitude float64, longitude float64, distance float64, merchantCategory string, merchantDatetime string, ctx context.Context) (*[]TopSubMerchant, error)
 
 func NewInquiryMerchantRawDataFn(db *bigquery.Client) InquiryMerchantRawDataFn {
@@ -111,11 +111,11 @@ func NewInquiryFemaleMerchantFn(db *bigquery.Client) InquiryFemaleMerchantFn {
 }
 
 func NewInquiryCountAgeFn(db *bigquery.Client) InquiryCountAgeFn {
-	return func(latitude float64, longitude float64, distance float64, merchantCategory string, merchantSubCategory string, merchantDatetime string, ctx context.Context) (*[]CountAge, error) {
+	return func(latitude float64, longitude float64, distance float64, merchantCategory string, merchantSubCategory string, merchantDatetime string, ctx context.Context) ([]CountAge, error) {
 		var values []CountAge
 		query := fmt.Sprintf("SELECT age, COUNT(age) AS count_age FROM bootcamp1_dataviz.masterData\n"+
 			"WHERE ST_MAXDISTANCE(merchant_latlog, ST_GEOGPOINT(%f, %f)) <= %f AND merchant_category='%s' AND merchant_sub_category='%s' AND time_stamp>='%s'\n"+
-			"GROUP BY age;\n",
+			"GROUP BY age;",
 			longitude, latitude, distance, merchantCategory, merchantSubCategory, merchantDatetime)
 		zap.L().Debug(query)
 		q := db.Query(query)
@@ -125,7 +125,7 @@ func NewInquiryCountAgeFn(db *bigquery.Client) InquiryCountAgeFn {
 		}
 		for {
 			var value CountAge
-			err := it.Next(&values)
+			err := it.Next(&value)
 			if err == iterator.Done {
 				break
 			}
@@ -135,7 +135,7 @@ func NewInquiryCountAgeFn(db *bigquery.Client) InquiryCountAgeFn {
 			values = append(values, value)
 		}
 		zap.L().Info(fmt.Sprintf("Inquiry Age - Success"))
-		return &values, nil
+		return values, nil
 	}
 }
 
