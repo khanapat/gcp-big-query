@@ -30,3 +30,8 @@ type SummaryData struct {
 	AverageSalary             float64 `bigquery:"average_salary"`
 	TotalTransaction          int     `bigquery:"total_transaction"`
 }
+
+type TopSubMerchant struct {
+	MerchantSubCategory       string `bigquery:"merchant_sub_category"`
+	MerchantSubCategoryNumber int    `bigquery:"merchant_sub_category_number"`
+}

@@ -82,10 +82,13 @@ func main() {
 
 	dbInquiryMerchantRawData := analyze.NewInquiryMerchantRawDataFn(dbBigQuery)
 	dbInquiryMerchantSummary := analyze.NewInquiryMerchantSummaryFn(dbBigQuery)
+	dbInquiryMaleMerchant := analyze.NewInquiryMaleMerchantFn(dbBigQuery)
+	dbInquiryFemaleMerchant := analyze.NewInquiryFemaleMerchantFn(dbBigQuery)
+	dbInquiryTopSubMerchant := analyze.NewInquiryTopSubMerchantFn(dbBigQuery)
 
 	analyzeHandler := analyze.NewHandler(
 		analyze.NewGetMerchantRawDataFn(dbInquiryMerchantRawData),
-		analyze.NewGetMerchantSummaryFn(dbInquiryMerchantSummary),
+		analyze.NewGetMerchantSummaryFn(dbInquiryMerchantSummary, dbInquiryMaleMerchant, dbInquiryFemaleMerchant, dbInquiryTopSubMerchant),
 	)
 
 	rWithPrefix.HandleFunc("/inquiry/raw", analyzeHandler.InquiryBigQueryRaw).Methods("POST")

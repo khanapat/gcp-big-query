@@ -33,7 +33,7 @@ func (h *handler) InquiryBigQueryRaw(w http.ResponseWriter, r *http.Request) {
 	}
 	result, err := h.GetMerchantRawDataFn(req, ctx)
 	if err != nil {
-		zap.L().Error("RAW ERROR", zap.Error(err))
+		zap.L().Error("Inquiry Raw Data", zap.Error(err))
 	}
 
 	w.Header().Set("Content-Type", "application/json")
@@ -54,7 +54,7 @@ func (h *handler) InquiryBigQuerySummary(w http.ResponseWriter, r *http.Request)
 	}
 	result, err := h.GetMerchantSummaryFn(req, ctx)
 	if err != nil {
-		zap.L().Error("RAW ERROR", zap.Error(err))
+		zap.L().Error("Inquiry Summary Data", zap.Error(err))
 	}
 
 	w.Header().Set("Content-Type", "application/json")

@@ -11,8 +11,9 @@ import (
 
 type InquiryMerchantRawDataFn func(latitude float64, longitude float64, distance float64, merchantCategory string, merchantSubCategory string, merchantDatetime string, ctx context.Context) (*[]AnalyzedData, error)
 type InquiryMerchantSummaryFn func(latitude float64, longitude float64, distance float64, merchantCategory string, merchantSubCategory string, merchantDatetime string, ctx context.Context) (*SummaryData, error)
-type InquiryMaleMerchantFn func(latitude float64, longitude float64, distance float64, merchantCategory string, merchantSubCategory string, merchantDatetime string, ctx context.Context) (*int, error)
-type InquiryFemaleMerchantFn func(latitude float64, longitude float64, distance float64, merchantCategory string, merchantSubCategory string, merchantDatetime string, ctx context.Context) (*int, error)
+type InquiryMaleMerchantFn func(latitude float64, longitude float64, distance float64, merchantCategory string, merchantSubCategory string, merchantDatetime string, ctx context.Context) (int, error)
+type InquiryFemaleMerchantFn func(latitude float64, longitude float64, distance float64, merchantCategory string, merchantSubCategory string, merchantDatetime string, ctx context.Context) (int, error)
+type InquiryTopSubMerchantFn func(latitude float64, longitude float64, distance float64, merchantCategory string, merchantDatetime string, ctx context.Context) (*[]TopSubMerchant, error)
 
 func NewInquiryMerchantRawDataFn(db *bigquery.Client) InquiryMerchantRawDataFn {
 	return func(latitude float64, longitude float64, distance float64, merchantCategory string, merchantSubCategory string, merchantDatetime string, ctx context.Context) (*[]AnalyzedData, error) {
@@ -65,44 +66,74 @@ func NewInquiryMerchantSummaryFn(db *bigquery.Client) InquiryMerchantSummaryFn {
 }
 
 func NewInquiryMaleMerchantFn(db *bigquery.Client) InquiryMaleMerchantFn {
-	return func(latitude float64, longitude float64, distance float64, merchantCategory string, merchantSubCategory string, merchantDatetime string, ctx context.Context) (*int, error) {
-		var male int
-		query := fmt.Sprintf("SELECT COUNT(*) FROM bootcamp1_dataviz.masterData\n"+
+	return func(latitude float64, longitude float64, distance float64, merchantCategory string, merchantSubCategory string, merchantDatetime string, ctx context.Context) (int, error) {
+		var values map[string]bigquery.Value
+		query := fmt.Sprintf("SELECT COUNT(*) AS male FROM bootcamp1_dataviz.masterData\n"+
 			"WHERE ST_MAXDISTANCE(merchant_latlog, ST_GEOGPOINT(%f, %f)) <= %f AND merchant_category='%s' AND merchant_sub_category='%s' AND time_stamp>='%s' AND gender='ชาย'",
 			longitude, latitude, distance, merchantCategory, merchantSubCategory, merchantDatetime)
 		zap.L().Debug(query)
 		q := db.Query(query)
 		it, err := q.Read(ctx)
 		if err != nil {
-			return nil, err
+			return 0, err
 		}
-		err = it.Next(&male)
+		err = it.Next(&values)
 		if err != nil {
-			return nil, err
+			return 0, err
 		}
+		male := values["male"].(int64)
 		zap.L().Info(fmt.Sprintf("Inquiry male - Success"))
-		return &male, nil
+		return int(male), nil
 	}
 }
 
-func NewInquiryFemaleMerchantFn(db *bigquery.Client) InquiryMaleMerchantFn {
-	return func(latitude float64, longitude float64, distance float64, merchantCategory string, merchantSubCategory string, merchantDatetime string, ctx context.Context) (*int, error) {
-		var female int
-		query := fmt.Sprintf("SELECT COUNT(*) FROM bootcamp1_dataviz.masterData\n"+
+func NewInquiryFemaleMerchantFn(db *bigquery.Client) InquiryFemaleMerchantFn {
+	return func(latitude float64, longitude float64, distance float64, merchantCategory string, merchantSubCategory string, merchantDatetime string, ctx context.Context) (int, error) {
+		var values map[string]bigquery.Value
+		query := fmt.Sprintf("SELECT COUNT(*) AS female FROM bootcamp1_dataviz.masterData\n"+
 			"WHERE ST_MAXDISTANCE(merchant_latlog, ST_GEOGPOINT(%f, %f)) <= %f AND merchant_category='%s' AND merchant_sub_category='%s' AND time_stamp>='%s' AND gender='หญิง'",
 			longitude, latitude, distance, merchantCategory, merchantSubCategory, merchantDatetime)
 		zap.L().Debug(query)
 		q := db.Query(query)
 		it, err := q.Read(ctx)
 		if err != nil {
-			return nil, err
+			return 0, err
 		}
-		err = it.Next(&female)
+		err = it.Next(&values)
+		if err != nil {
+			return 0, err
+		}
+		female := values["female"].(int64)
+		zap.L().Info(fmt.Sprintf("Inquiry male - Success"))
+		return int(female), nil
+	}
+}
+
+func NewInquiryTopSubMerchantFn(db *bigquery.Client) InquiryTopSubMerchantFn {
+	return func(latitude float64, longitude float64, distance float64, merchantCategory string, merchantDatetime string, ctx context.Context) (*[]TopSubMerchant, error) {
+		var topSubMerchants []TopSubMerchant
+		query := fmt.Sprintf("SELECT merchant_sub_category, COUNT(*) AS merchant_sub_category_number FROM bootcamp1_dataviz.masterData\n"+
+			"WHERE ST_MAXDISTANCE(merchant_latlog, ST_GEOGPOINT(%f, %f)) <= %f AND merchant_category='%s' AND time_stamp>='%s'\n"+
+			"GROUP BY merchant_sub_category", longitude, latitude, distance, merchantCategory, merchantDatetime)
+		zap.L().Debug(query)
+		q := db.Query(query)
+		it, err := q.Read(ctx)
 		if err != nil {
 			return nil, err
 		}
-		zap.L().Info(fmt.Sprintf("Inquiry male - Success"))
-		return &female, nil
+		for {
+			var topSubMerchant TopSubMerchant
+			err := it.Next(&topSubMerchant)
+			if err == iterator.Done {
+				break
+			}
+			if err != nil {
+				return nil, err
+			}
+			topSubMerchants = append(topSubMerchants, topSubMerchant)
+		}
+		zap.L().Info(fmt.Sprintf("Inquiry Top Sub Category - Success"))
+		return &topSubMerchants, nil
 	}
 }
 
