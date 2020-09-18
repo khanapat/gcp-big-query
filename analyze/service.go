@@ -66,7 +66,7 @@ func NewGetMerchantSummaryFn(inquiryMerchantSummaryFn InquiryMerchantSummaryFn, 
 		agingRange = append(agingRange, oneFive, twoEight, fourOne, fiveFour, sixSeven)
 		resp := InquiryAnalyzedDataResponse{
 			MerchantSubCategoryNumber: summary.MerchantSubCategoryNumber,
-			AverageAmount:             summary.AverageAmount,
+			AverageAmount:             summary.AverageAmount / float64(summary.MerchantSubCategoryNumber),
 			PurchasingPowerMax:        summary.MaximumAmount,
 			PurchasingPowerMin:        summary.MinimumAmount,
 			Age:                       summary.AverageAge,
