@@ -29,6 +29,7 @@ type SummaryData struct {
 	MaximumAmount             float64 `bigquery:"maximum_amount"`
 	AverageSalary             float64 `bigquery:"average_salary"`
 	TotalTransaction          int     `bigquery:"total_transaction"`
+	AverageAge                float64 `bigquery:"average_age"`
 }
 
 type CountAge struct {

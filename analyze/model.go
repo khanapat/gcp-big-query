@@ -14,7 +14,7 @@ type InquiryAnalyzedDataResponse struct {
 	AverageAmount             float64          `json:"averageAmount"`
 	PurchasingPowerMax        float64          `json:"purchasingPowerMax"`
 	PurchasingPowerMin        float64          `json:"purchasingPowerMin"`
-	Age                       int              `json:"age"`
+	Age                       float64          `json:"age"`
 	AgeRange                  []int            `json:"ageRange"`
 	Male                      float64          `json:"male"`
 	Female                    float64          `json:"female"`

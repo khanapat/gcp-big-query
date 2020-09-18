@@ -47,7 +47,7 @@ func NewInquiryMerchantRawDataFn(db *bigquery.Client) InquiryMerchantRawDataFn {
 func NewInquiryMerchantSummaryFn(db *bigquery.Client) InquiryMerchantSummaryFn {
 	return func(latitude float64, longitude float64, distance float64, merchantCategory string, merchantSubCategory string, merchantDatetime string, ctx context.Context) (*SummaryData, error) {
 		var summary SummaryData
-		query := fmt.Sprintf("SELECT COUNT(DISTINCT merchant_id) AS merchant_sub_category_number, AVG(amount) AS average_amount, MAX(amount) AS maximum_amount, MIN(amount) AS minimum_amount, AVG(salary) AS average_salary, COUNT(gender) AS total_transaction\n"+
+		query := fmt.Sprintf("SELECT COUNT(DISTINCT merchant_id) AS merchant_sub_category_number, AVG(amount) AS average_amount, MAX(amount) AS maximum_amount, MIN(amount) AS minimum_amount, AVG(salary) AS average_salary, COUNT(gender) AS total_transaction, AVG(age) AS average_age\n"+
 			"FROM bootcamp1_dataviz.masterData\n"+
 			"WHERE ST_MAXDISTANCE(merchant_latlog, ST_GEOGPOINT(%f, %f)) <= %f AND merchant_category='%s' AND merchant_sub_category='%s' AND time_stamp>='%s';",
 			longitude, latitude, distance, merchantCategory, merchantSubCategory, merchantDatetime)
